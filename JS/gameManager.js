@@ -19,16 +19,24 @@ globos:[],
 globos_esp:[],
 balas:[],
 
+keyspressed : {
+    arrowLeft:false,
+    arrowRight:false,
+    a :false,
+    d :false
+    },
+
 ciclesCont :0,
 
 FPS:60,
 
 
 init(){
-
+    
     this.setContext()
     this.setDimensions()
     this.crateBackGround()
+    this.createPlayer()
     this.createPlayer()
     this.start()
     
@@ -103,23 +111,63 @@ drawBackGround(){
     this.background.draw()
 },
 
-setListeners() {
-    document.onkeydown = (e) => {
-      if (e.key === "ArrowLeft") {
+setListeners() { 
+    
+    
+document.body.addEventListener("keydown",  (e) => {
+    
+    switch(e.key)
+    {
+         case "ArrowLeft":
+             this.keyspressed.arrowLeft = true
+             break;
+         case "ArrowRight":
+             this.keyspressed.arrowRight = true
+             break;
+         case "a":
+             this.keyspressed.a = true
+             break;
+         case "d":
+             this.keyspressed.d = true
+             break;
+    }
+    
+});
+document.body.addEventListener("keyup", (e) => {
+   switch(e.key)
+    {
+         case "ArrowLeft":
+             this.keyspressed.arrowLeft = false
+             break;
+         case "ArrowRight":
+             this.keyspressed.arrowRight = false
+             break;
+         case "a":
+             this.keyspressed.a = false
+             break;
+         case "d":
+             this.keyspressed.d = false
+             break;
+    }
+
+});
+
+
+      if ( this.keyspressed.arrowLeft) {
         this.player[0].movePlayer(this.playerDir1=-1)
       }
-      if (e.key === "ArrowRight") {
+      if ( this.keyspressed.arrowRight) {
         this.player[0].movePlayer(this.playerDir1=1)
       }
       if (this.player.length > 1)
       {
-         if (e.key === "a") {
+        if ( this.keyspressed.a) {
         this.player[1].movePlayer(this.playerDir1=-1)
       }
-      if (e.key === "d") {
+        if (this.keyspressed.d) {
         this.player[1].movePlayer(this.playerDir1=1)
       } 
-      }
+      
     }
     
   },
