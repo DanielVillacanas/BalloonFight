@@ -17,13 +17,15 @@ playerDirecction:[playerDir1 = 0,playerDir2 = 0],
 playerSpeed:[playerSpeed1 = 15,playerSpeed2 = 15],
 globos:[],
 globos_esp:[],
-balas:[],
+
 
 keyspressed : {
     arrowLeft:false,
     arrowRight:false,
+    arrowUp:false,
     a :false,
-    d :false
+    d :false,
+    w :false
     },
 
 ciclesCont :0,
@@ -94,6 +96,7 @@ drawAll(){
     this.drawBackGround()
     this.drawPlayer()
     this.drawGlobos()
+    this.drawBullets()
 
 },
 
@@ -110,6 +113,11 @@ drawGlobos(){
 drawBackGround(){
     this.background.draw()
 },
+drawBullets(){
+    this.player.forEach(element => {
+        element.paintBullets()
+    });
+},
 
 setListeners() { 
     
@@ -123,12 +131,18 @@ document.body.addEventListener("keydown",  (e) => {
              break;
          case "ArrowRight":
              this.keyspressed.arrowRight = true
-             break;
+             break; 
+         case "ArrowUp" :
+            this.keyspressed.arrowUp = false
+            break;
          case "a":
              this.keyspressed.a = true
              break;
          case "d":
              this.keyspressed.d = true
+             break;
+        case "w":
+             this.keyspressed.w = false
              break;
     }
     
@@ -142,11 +156,17 @@ document.body.addEventListener("keyup", (e) => {
          case "ArrowRight":
              this.keyspressed.arrowRight = false
              break;
+         case "ArrowUp" :
+            this.keyspressed.arrowUp = true
+            break;
          case "a":
              this.keyspressed.a = false
              break;
          case "d":
              this.keyspressed.d = false
+             break;
+        case "w":
+             this.keyspressed.w = true
              break;
     }
 
@@ -159,6 +179,10 @@ document.body.addEventListener("keyup", (e) => {
       if ( this.keyspressed.arrowRight) {
         this.player[0].movePlayer(this.playerDir1=1)
       }
+      if ( this.keyspressed.arrowUp) {
+        this.player[0].createBullets()
+        this.keyspressed.arrowUp = false
+      }
       if (this.player.length > 1)
       {
         if ( this.keyspressed.a) {
@@ -167,6 +191,10 @@ document.body.addEventListener("keyup", (e) => {
         if (this.keyspressed.d) {
         this.player[1].movePlayer(this.playerDir1=1)
       } 
+      if ( this.keyspressed.w) {
+        this.player[1].createBullets()
+        this.keyspressed.w = false
+      }
       
     }
     

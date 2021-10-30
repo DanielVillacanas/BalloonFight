@@ -21,6 +21,8 @@ class Player {
             height : canvasDOM.height,
         }
 
+        this.bullets = [];
+
         //Parametros del sprite generico
         this.frames = 16;
         this.framesIndex = 0;
@@ -63,6 +65,16 @@ class Player {
       this.framesIndex = 0
     }
     this.framesIndex++
-  }
+    }
+
+    createBullets(){
+        this.bullets.push(new Bullets(this.CTX,this.canvasDOM,this.pos.X,this.pos.Y,10,"red"))
+        console.log(this.bullets)
+    }
+    paintBullets(){
+        this.bullets.forEach(element => {
+            element.drawBullets()
+        });
+    }
 
 }
