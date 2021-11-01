@@ -17,8 +17,9 @@ playerDirecction:[playerDir1 = 0,playerDir2 = 0],
 playerSpeed:[playerSpeed1 = 15,playerSpeed2 = 15],
 globos:[],
 globos_esp:[],
+globoID : 0,
 
-globosID : 0,
+colorNumber : 0,
 
 keyspressed : {
     arrowLeft:false,
@@ -75,16 +76,18 @@ setDimensions(){
 
 
 crateBackGround(){
-    this.background = new Background (this.CTX,this.size.height,this.size.width)
+    colorNumber = Math.round(Math.random() * 4)
+
+    this.background = new Background (this.CTX,this.canvasDOM,this.size.height,this.size.width, colorNumber)
 },
 
 createPlayer(){
     this.player.push(new Player(this.CTX,this.canvasDOM,pos={x:this.size.width/2,y:this.size.height-200},"player_sprite.png",playerSpeed1))
 },
  createGlobo(){
-     if(this.ciclesCont%100 === 0 && this.globos.length < 1){
-        this.globos.push(new Globos(this.CTX,this.canvasDOM,"white",2,this.floorPosY,this.globosID))
-        this.globosID++
+     if(this.ciclesCont%100 === 0 && this.globos.length < 10){
+        this.globos.push(new Globos(this.CTX,this.canvasDOM,colorNumber,2,this.floorPosY,this.globoID))
+        this.globoID++
      }
  },
 cleanScreen(){
@@ -113,7 +116,8 @@ drawGlobos(){
     });
 },
 drawBackGround(){
-    this.background.draw()
+
+    this.background.draw(this.backgroundColor)
 },
 drawBullets(){
     this.player.forEach(element => {
@@ -143,6 +147,10 @@ collisionBulletGlobo(){
             this.globos.forEach(globos => {
                  if(utilies.checkCircularRectagleCollision(globos.radius,bullets.width,bullets.height, globos.position.X,globos.position.Y, bullets.pos.X, bullets.pos.Y)){
                     this.removeObject(player,bullets,globos)
+                    if (globos.colorNumber === this.background.colorNumber) {
+                        player.score++
+                        console.log(player.score)
+                    }
                  }
             })
         })
@@ -237,7 +245,7 @@ document.body.addEventListener("keyup", (e) => {
   },
 
   removeGlobos(globo){
-    this.globos = this.globos.filter(element => element.globosID != globo.globosID)
+    this.globos = this.globos.filter(element => element.globoID != globo.globoID)
   }
 
 }

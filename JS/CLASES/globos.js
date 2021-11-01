@@ -1,6 +1,6 @@
 class Globos {
 
-    constructor(CTX,canvasDOM,color,speedX,floorPosY)
+    constructor(CTX,canvasDOM,colorNumber,speedX,floorPosY,globoID)
     {
 
         this.CTX =  CTX
@@ -10,8 +10,7 @@ class Globos {
             height : 2*this.radius,
             width : 2*this.radius,
         }
-        
-        this.color = color
+         
         this.speed ={
             X : speedX,
             Y : Math.round(Math.random()*2 + 1),
@@ -24,13 +23,18 @@ class Globos {
             X : Math.floor(Math.random()*this.canvasDOM.width-this.size.width + this.size.width)
         }
         this.floorPosY = floorPosY
+
+        this.globoID = globoID
+
+        this.colors = ["rgba(186, 5, 236)","rgba(229, 235, 7)","rgba(30, 197, 0)","rgba(0, 33, 197)","white"]
+        this.colorNumber = colorNumber
     }
 
     drawGlobos(){
         this.moveGlobos()
         this.CTX.beginPath();
         this.CTX.arc(this.position.X, this.position.Y, this.radius, 0, 2 * Math.PI);
-        this.CTX.fillStyle = this.color;
+        this.CTX.fillStyle = this.colors[this.colorNumber];
         this.CTX.fill();
         this.CTX.fillStyle = 'black';
         this.CTX.stroke();

@@ -28,6 +28,8 @@ class Player {
         this.framesIndex = 0;
         this.countBullets = 0;
 
+        //SCORE
+        this.score = 0
     }
 
     drawPlayer(ciclesCont){
@@ -79,7 +81,8 @@ class Player {
 
     removeBullet(bala){
         this.bullets = this.bullets.filter(element => element.bulletID != bala.bulletID)
-        console.log(this.bullets)
     }
+
+
 
 }
