@@ -15,6 +15,7 @@ floorPosY : 100,
 player:[],
 playerDirecction:[playerDir1 = 0,playerDir2 = 0],
 playerSpeed:[playerSpeed1 = 15,playerSpeed2 = 15],
+playerRadius : 50,
 globos:[],
 globos_esp:[],
 
@@ -78,7 +79,7 @@ crateBackGround(){
 },
 
 createPlayer(){
-    this.player.push(new Player(this.CTX,this.canvasDOM,pos={x:this.size.width/2,y:this.size.height-200},50,"player_sprite.png",playerSpeed1))
+    this.player.push(new Player(this.CTX,this.canvasDOM,pos={x:this.size.width/2,y:this.size.height-200},this.playerRadius,"player_sprite.png",playerSpeed1))
 },
  createGlobo(){
      if(this.ciclesCont%100 === 0 && this.globos.length < 10){
@@ -97,7 +98,7 @@ drawAll(){
     this.drawPlayer()
     this.drawGlobos()
     this.drawBullets()
-
+    this.checkAllCollisions()
 },
 
 drawPlayer(){
@@ -116,6 +117,19 @@ drawBackGround(){
 drawBullets(){
     this.player.forEach(element => {
         element.paintBullets()
+    });
+},
+
+checkAllCollisions()
+{
+    this.collisionPlayerGlobo()
+},
+
+collisionPlayerGlobo(){
+    this.player.forEach(element => {
+        this.globos.forEach( globos =>{
+            utilies.checkCircularCollision(element.radius,globos.radius,element.pos.X,element.pos.Y,globos.position.X,globos.position.Y) ? console.log("COLISION") : null
+        })
     });
 },
 
