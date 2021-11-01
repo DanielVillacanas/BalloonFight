@@ -1,6 +1,6 @@
 class Player {
 
-    constructor(CTX,canvasDOM,pos,img_name,speed)
+    constructor(CTX,canvasDOM,pos,img_name,speed,score_posX)
     {
         this.CTX =  CTX;
         this.pos = {
@@ -29,7 +29,14 @@ class Player {
         this.countBullets = 0;
 
         //SCORE
+        this.imgScore = undefined
         this.score = 0
+        this.scoreFrames = 10
+        this.scoreFramesIndex = 9
+        this.scoreSize = {
+            height : 108,
+            width :921,
+        }
     }
 
     drawPlayer(ciclesCont){
@@ -83,6 +90,37 @@ class Player {
         this.bullets = this.bullets.filter(element => element.bulletID != bala.bulletID)
     }
 
-
+    paintScore(){
+        if(this.score.toString().length > 2)
+        {
+        for(let i = 0;i<3;i++)
+        {
+            
+            this.drawScore(parseInt(this.score.toString().charAt(i)),i)
+        }
+        }
+        else if(this.score.toString().length > 1)
+        {
+        for(let i = 0;i<2;i++)
+        {
+            
+            this.drawScore(parseInt(this.score.toString().charAt(i)),i)
+        }
+        }
+        else{
+            this.drawScore(parseInt(this.score.toString().charAt(0)),0)
+        }
+    }
+    drawScore(value,i)
+    {
+        this.imgScore = new Image()
+        this.imgScore.src = `../../img/score.png`
+        this.CTX.drawImage(
+            this.imgScore,
+            value * this.scoreSize.width / this.scoreFrames  , 0 ,
+            this.scoreSize.width/this.scoreFrames -5,this.scoreSize.height,
+            100 + i*this.scoreSize.width/this.scoreFrames , 100,
+            this.scoreSize.width/this.scoreFrames,this.scoreSize.height)
+    }
 
 }

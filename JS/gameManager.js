@@ -97,11 +97,11 @@ cleanScreen(){
 },
 
 drawAll(){
-
     this.drawBackGround()
     this.drawPlayer()
     this.drawBullets()
     this.drawGlobos() 
+    this.player[0].paintScore()
     this.checkAllCollisions()
 },
 
