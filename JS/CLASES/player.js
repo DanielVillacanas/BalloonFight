@@ -1,13 +1,13 @@
 class Player {
 
-    constructor(CTX,canvasDOM,pos,radius,img_name,speed)
+    constructor(CTX,canvasDOM,pos,img_name,speed)
     {
         this.CTX =  CTX;
         this.pos = {
             X : pos.x,
             Y : pos.y,
         }
-        this.radius = radius;
+        this.radius = 0;
         this.img = undefined;
         this.img_name =  img_name;
         this.speed = speed;
@@ -26,8 +26,10 @@ class Player {
         //Parametros del sprite generico
         this.frames = 16;
         this.framesIndex = 0;
+        this.countBullets = 0;
 
-
+        //SCORE
+        this.score = 0
     }
 
     drawPlayer(ciclesCont){
@@ -44,7 +46,7 @@ class Player {
             if(ciclesCont % 5 === 0){
                   this.animate()
             }
-      
+        this.radius = this.size.height/2 - 25;
 
     }
 
@@ -68,13 +70,19 @@ class Player {
     }
 
     createBullets(){
-        this.bullets.push(new Bullets(this.CTX,this.canvasDOM,this.pos.X,this.pos.Y,10,"red"))
-        console.log(this.bullets)
+        this.bullets.push(new Bullets(this.CTX,this.canvasDOM,this.pos.X,this.pos.Y,10,"red",this.countBullets,this))
+        this.countBullets++
     }
     paintBullets(){
         this.bullets.forEach(element => {
             element.drawBullets()
         });
     }
+
+    removeBullet(bala){
+        this.bullets = this.bullets.filter(element => element.bulletID != bala.bulletID)
+    }
+
+
 
 }

@@ -15,10 +15,11 @@ floorPosY : 100,
 player:[],
 playerDirecction:[playerDir1 = 0,playerDir2 = 0],
 playerSpeed:[playerSpeed1 = 15,playerSpeed2 = 15],
-playerRadius : 50,
 globos:[],
 globos_esp:[],
+globoID : 0,
 
+colorNumber : 0,
 
 keyspressed : {
     arrowLeft:false,
@@ -75,15 +76,18 @@ setDimensions(){
 
 
 crateBackGround(){
-    this.background = new Background (this.CTX,this.size.height,this.size.width)
+    colorNumber = Math.round(Math.random() * 4)
+
+    this.background = new Background (this.CTX,this.canvasDOM,this.size.height,this.size.width, colorNumber)
 },
 
 createPlayer(){
-    this.player.push(new Player(this.CTX,this.canvasDOM,pos={x:this.size.width/2,y:this.size.height-200},this.playerRadius,"player_sprite.png",playerSpeed1))
+    this.player.push(new Player(this.CTX,this.canvasDOM,pos={x:this.size.width/2,y:this.size.height-200},"player_sprite.png",playerSpeed1))
 },
  createGlobo(){
      if(this.ciclesCont%100 === 0 && this.globos.length < 10){
-        this.globos.push(new Globos(this.CTX,this.canvasDOM,"white",2,this.floorPosY))
+        this.globos.push(new Globos(this.CTX,this.canvasDOM,colorNumber,2,this.floorPosY,this.globoID))
+        this.globoID++
      }
  },
 cleanScreen(){
@@ -96,8 +100,8 @@ drawAll(){
 
     this.drawBackGround()
     this.drawPlayer()
-    this.drawGlobos()
     this.drawBullets()
+    this.drawGlobos() 
     this.checkAllCollisions()
 },
 
@@ -112,7 +116,8 @@ drawGlobos(){
     });
 },
 drawBackGround(){
-    this.background.draw()
+
+    this.background.draw(this.backgroundColor)
 },
 drawBullets(){
     this.player.forEach(element => {
@@ -123,12 +128,31 @@ drawBullets(){
 checkAllCollisions()
 {
     this.collisionPlayerGlobo()
+    this.collisionBulletGlobo()
 },
 
-collisionPlayerGlobo(){
+collisionPlayerGlobo(){//Revisar collider
     this.player.forEach(element => {
         this.globos.forEach( globos =>{
-            utilies.checkCircularCollision(element.radius,globos.radius,element.pos.X,element.pos.Y,globos.position.X,globos.position.Y) ? console.log("COLISION") : null
+             if(utilies.checkCircularRectagleCollision(globos.radius,element.size.width/element.frames - 15,element.size.height - 35, globos.position.X,globos.position.Y,element.pos.X,element.pos.Y)){
+                 this.removeGlobos(globos)
+             }
+        })
+    });
+},
+
+collisionBulletGlobo(){
+    this.player.forEach(player => {
+        player.bullets.forEach(bullets =>{
+            this.globos.forEach(globos => {
+                 if(utilies.checkCircularRectagleCollision(globos.radius,bullets.width,bullets.height, globos.position.X,globos.position.Y, bullets.pos.X, bullets.pos.Y)){
+                    this.removeObject(player,bullets,globos)
+                    if (globos.colorNumber === this.background.colorNumber) {
+                        player.score++
+                        console.log(player.score)
+                    }
+                 }
+            })
         })
     });
 },
@@ -213,5 +237,15 @@ document.body.addEventListener("keyup", (e) => {
     }
     
   },
+
+  removeObject(player,bala,globo){
+    player.removeBullet(bala)
+
+    this.removeGlobos(globo)
+  },
+
+  removeGlobos(globo){
+    this.globos = this.globos.filter(element => element.globoID != globo.globoID)
+  }
 
 }
