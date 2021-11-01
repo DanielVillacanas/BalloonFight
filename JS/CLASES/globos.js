@@ -27,13 +27,13 @@ class Globos {
     }
 
     drawGlobos(){
+        this.moveGlobos()
         this.CTX.beginPath();
         this.CTX.arc(this.position.X, this.position.Y, this.radius, 0, 2 * Math.PI);
         this.CTX.fillStyle = this.color;
         this.CTX.fill();
         this.CTX.fillStyle = 'black';
         this.CTX.stroke();
-        this.moveGlobos()
 
     }
 
