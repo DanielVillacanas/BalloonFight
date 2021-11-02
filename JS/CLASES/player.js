@@ -77,8 +77,10 @@ class Player {
     }
 
     createBullets(){
+        if(this.bullets.length < 5){
         this.bullets.push(new Bullets(this.CTX,this.canvasDOM,this.pos.X,this.pos.Y,10,"red",this.countBullets,this))
         this.countBullets++
+        }
     }
     paintBullets(){
         this.bullets.forEach(element => {
@@ -90,13 +92,13 @@ class Player {
         this.bullets = this.bullets.filter(element => element.bulletID != bala.bulletID)
     }
 
-    paintScore(){
+    paintScore(playerID){
         if(this.score.toString().length > 2)
         {
         for(let i = 0;i<3;i++)
         {
             
-            this.drawScore(parseInt(this.score.toString().charAt(i)),i)
+            this.drawScore(parseInt(this.score.toString().charAt(i)),i,playerID)
         }
         }
         else if(this.score.toString().length > 1)
@@ -104,22 +106,22 @@ class Player {
         for(let i = 0;i<2;i++)
         {
             
-            this.drawScore(parseInt(this.score.toString().charAt(i)),i)
+            this.drawScore(parseInt(this.score.toString().charAt(i)),i,playerID)
         }
         }
         else{
-            this.drawScore(parseInt(this.score.toString().charAt(0)),0)
+            this.drawScore(parseInt(this.score.toString().charAt(0)),0,playerID)
         }
     }
-    drawScore(value,i)
+    drawScore(value,i,playerID)
     {
         this.imgScore = new Image()
-        this.imgScore.src = `../../img/score.png`
+        this.imgScore.src = `../img/score.png`
         this.CTX.drawImage(
             this.imgScore,
             value * this.scoreSize.width / this.scoreFrames  , 0 ,
             this.scoreSize.width/this.scoreFrames -5,this.scoreSize.height,
-            100 + i*this.scoreSize.width/this.scoreFrames , 100,
+            100 + this.size.width*playerID + i*this.scoreSize.width/this.scoreFrames , 100,
             this.scoreSize.width/this.scoreFrames,this.scoreSize.height)
     }
 

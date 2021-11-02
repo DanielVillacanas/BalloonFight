@@ -20,7 +20,7 @@ class Globos {
 
         this.position = {
             Y : -this.radius,
-            X : Math.floor(Math.random()*this.canvasDOM.width-this.size.width + this.size.width)
+            X : Math.floor(Math.random()*this.canvasDOM.width - this.size.width + this.size.width)
         }
         this.floorPosY = floorPosY
 
@@ -30,11 +30,11 @@ class Globos {
         this.colorNumber = colorNumber
     }
 
-    drawGlobos(){
+    drawGlobos(colorNumber){
         this.moveGlobos()
         this.CTX.beginPath();
         this.CTX.arc(this.position.X, this.position.Y, this.radius, 0, 2 * Math.PI);
-        this.CTX.fillStyle = this.colors[this.colorNumber];
+        this.CTX.fillStyle = this.colors[colorNumber];
         this.CTX.fill();
         this.CTX.fillStyle = 'black';
         this.CTX.stroke();

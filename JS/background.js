@@ -30,13 +30,13 @@ this.floor_image = new Image()
 this.floor_image.src = `../img/floor.png`
 }
 
-draw() {
+draw(colorNumber) {
 
     this.image.complete ? this.CTX.drawImage(this.image,0,0,this.size.width,this.size.height) : null
     
     this.floor_image.complete ? this.CTX.drawImage(this.floor_image,0,this.size.height-this.floor_image.height,this.size.width,this.floor_image.height) : null
 
-    this.CTX.fillStyle = this.colorsBack[this.colorNumber];
+    this.CTX.fillStyle = this.colorsBack[colorNumber];
     this.CTX.fillRect(this.posX,this.posY,this.size.width,this.canvasDOM.height)
 }
 
