@@ -56,6 +56,12 @@ FPS:60,
 
 winImg: undefined,
 
+sound:undefined,
+soundcrash:undefined,
+soundPlayerHit:undefined,
+soundEnd : undefined,
+soundInit:undefined,
+
 //#endregion
 
 init(){
@@ -71,7 +77,10 @@ init(){
 },
 
 interFace(){
+     this.soundInit = new Audio("../MUSIC/InitSound.mp3")
+    this.soundInit.play()
    this.interFaceInterval= setInterval(() => {
+
         this.interFaceImg= new Image()
         this.interFaceImg.src = `../img/Interfaz.png`
         
@@ -104,6 +113,7 @@ document.body.addEventListener("keyup",  (e) => {
     if(e.key === "Enter")
     {
         if(this.intervalID === undefined) {
+        this.soundInit.pause()
         clearInterval(this.interFaceInterval)
         this.start()
         }
@@ -114,14 +124,28 @@ document.body.addEventListener("keyup",  (e) => {
 
 start(){
 
+    this.sound = new Audio("../MUSIC/01.Forever Bound - Stereo Madness.mp3")
+    this.sound.volume = 0.1
+    this.sound.play()
+    this.soundcrash = new Audio("../MUSIC/yt1s.com - explote sound geometry dash.mp3")
+    this.soundPlayerHit =  new Audio ("../MUSIC/HitPlayer.mp3")
+    this.soundEnd = new Audio("../MUSIC/Final_Sound.mp3")
+   
+
    this.intervalID = setInterval(() => {
         if(this.timer.currentTime <= 0)
         {
+
             if(this.player[0].score === this.player[1].score){
                 this.timer.currentTime += 11
             }
             else{
                 if(this.player[0].score < this.player[1].score)
+
+            this.sound.pause()
+            this.soundEnd.play()
+            clearInterval(this.intervalID)
+            if(this.player[0].score < this.player[1].score)
             {
                 this.winImg = new Image()
                 this.winImg.src = "../img/Player1Wins.png"
@@ -182,14 +206,14 @@ createPlayer(num){
 },
 
 createGlobo(){
-     if(this.ciclesCont%100 === 0 && this.globos.length < 10){
+     if(this.ciclesCont%50 === 0 && this.globos.length < 10){
         this.globos.push(new Globos(this.CTX,this.canvasDOM,this.colorNumber,2,this.floorPosY,this.globoID))
         this.globoID++
      }
  },
 
 createGloboESP(){
-    if(this.ciclesCont%100 === 0 && this.globos_esp.length < 4){
+    if(this.ciclesCont%100 === 0 && this.globos_esp.length < 0){
         this.globos_esp.push(new GlobosESP(this.CTX,this.canvasDOM,Math.round(Math.random()*4),2,this.floorPosY,this.globos_espID))
         this.globos_espID ++;
     }
@@ -251,6 +275,7 @@ checkAllCollisions()
     this.collisionGloboGlobo()
     this.collisionGloboGloboESP()
     this.collisionGloboESPGloboESP()
+
 },
 
 collisionPlayerGlobo(){
@@ -258,6 +283,7 @@ collisionPlayerGlobo(){
         this.globos.forEach( globos =>{
              if(utilies.checkCircularRectagleCollision(globos.radius,element.size.width/element.frames - 15,element.size.height - 35, globos.position.X,globos.position.Y,element.pos.X,element.pos.Y)){
                  this.removeGlobos(globos)
+                 this.soundPlayerHit.play()
                   element.score -= 3
                   element.score<0 ? element.score = 0: null
              }
@@ -270,6 +296,8 @@ collisionPlayerGloboESP(){
         this.globos_esp.forEach( globos_esp =>{
              if(utilies.checkCircularRectagleCollision(globos_esp.radius,element.size.width/element.frames - 15,element.size.height - 35, globos_esp.position.X,globos_esp.position.Y,element.pos.X,element.pos.Y)){
                  this.removeGlobosESP(globos_esp)
+                 this.soundcrash.volume = 1
+                     this.soundPlayerHit.play()
                  element.score -= 3
                  element.score<0 ? element.score = 0: null
              }
@@ -283,6 +311,8 @@ collisionBulletGlobo(){
             this.globos.forEach(globos => {
                  if(utilies.checkCircularRectagleCollision(globos.radius,bullets.width,bullets.height, globos.position.X,globos.position.Y, bullets.pos.X, bullets.pos.Y)){
                     this.removeObject(player,bullets,globos)
+                    this.soundcrash.volume = 1
+                   this.soundcrash.play()
                     player.score++
                  }
             })
@@ -298,9 +328,13 @@ collisionBulletGloboESP(){
                     this.removeObject(player,bullets,globos_esp)
                     if (globos_esp.colorNumber === this.colorNumber) {
                         player.score++
+                        this.soundcrash.volume = 1
+                        this.soundcrash.play()
                     }
                     else
                     {
+                        this.soundcrash.volume = 1
+                        this.soundcrash.play()
                         player.score -=2
                         player.score < 0 ? player.score = 0:null
                     }
@@ -314,12 +348,14 @@ collisionGloboGlobo(){
     this.globos.forEach(globo1 =>{
         this.globos.forEach(globo2 =>{
             if(utilies.checkBalloonCollision(globo1.radius,globo2.radius,globo1.position.X,globo1.position.Y,globo2.position.X,globo2.position.Y)&&(globo1.globoID != globo2.globoID)){
+
                if((globo1.colDetect === false || globo2.colDetect === false) &&  (this.timer.currentTime < globo1.timeCol - 1 || this.timer.currentTime < globo2.timeCol - 1  ) )
                {
                    globo1.colDetect =  true
                    globo2.colDetect = true
                    globo1.timeCol = this.timer.currentTime
                    globo2.timeCol = this.timer.currentTime
+
                 if(globo1.globoID != globo2.globoID)
                 {
                     if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
@@ -444,6 +480,9 @@ collisionGloboGloboESP(){
                    globo2.colDetect = true
                    globo1.timeCol = this.timer.currentTime
                    globo2.timeCol = this.timer.currentTime
+
+
+
                 if(globo1.globoID != globo2.globoID)
                 {
                     if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
@@ -461,6 +500,7 @@ collisionGloboGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * 1
+
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
                         {
@@ -584,6 +624,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * 1
+
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
                         {
@@ -591,6 +632,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * -1
+
                         }
                         else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -598,6 +640,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * 1
+
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -605,7 +648,12 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * -1
+
                         }
+
+
+                        }
+                        
                     }
                     else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
                     {
@@ -615,6 +663,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * 1
+
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
                         {
@@ -622,6 +671,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * 1
+
                         }
                         else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -629,6 +679,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * 1
+
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -636,7 +687,12 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * -1
+
                         }
+
+                        }
+                        
+
                     }
                     else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY === globo2.direcctionY)
                     {
@@ -646,6 +702,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * 1
+
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
                         {
@@ -653,6 +710,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * 1
+
                         }
                         else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -660,6 +718,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * -1
+
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -667,10 +726,18 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * -1
+
                         }
                     }
                 }
               }
+
+
+                        }
+                        
+                    }
+                } 
+              }         
             }
             else if(globo1.colDetect === true && globo2.colDetect === true){
                 globo1.colDetect =  false
@@ -679,6 +746,7 @@ collisionGloboESPGloboESP(){
         })
     })
 },
+
 //#endregion
 
 //#region LISTENER
