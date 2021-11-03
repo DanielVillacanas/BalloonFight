@@ -17,12 +17,10 @@ const utilies ={
            return (TotalDis < radius1+(width/2))
        }
     },
-
      checkBalloonCollision(radius1,radius2,posX1,posY1,posX2,posY2)
     {
         let xdis = posX1 - posX2
         let ydis = posY1 - posY2
-
         let TotalDis = Math.sqrt(Math.pow(xdis,2) + Math.pow(ydis,2))
         if(TotalDis < radius1+radius2 && TotalDis != 0)
         {
@@ -30,13 +28,6 @@ const utilies ={
         }
        return (TotalDis < radius1+radius2)
     },
-
-
-        let TotalDis = Math.sqrt(Math.pow(xdis,2) + Math.pow(ydis,2))
-
-       return (TotalDis < radius1+radius2)
-    },
-
     // checkCircularCollision(radius1,radius2,posX1,posY1,posX2,posY2)
     // {
     //     let xdis = posX1+radius1 - posX2+radius2
@@ -56,3 +47,19 @@ const utilies ={
     //    }
     // }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

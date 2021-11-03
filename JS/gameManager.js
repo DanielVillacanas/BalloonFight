@@ -12,7 +12,7 @@ size : {
 
 timer :undefined,
 intervalID : undefined,
-currentTime : 360,
+currentTime : 10,
 stringTime : "",
 
 background:undefined,
@@ -28,12 +28,10 @@ globoID : 0,
 
 interFaceInterval:undefined,
 interFaceImg: undefined,
-
 sizePressEnter : {
     height:84,
     width:4484,
 },
-
 pressEnterImg: undefined,
 interFaceCont : 0,
 interFaceDir : 1,
@@ -77,24 +75,16 @@ init(){
 },
 
 interFace(){
-     this.soundInit = new Audio("../MUSIC/InitSound.mp3")
-    this.soundInit.play()
    this.interFaceInterval= setInterval(() => {
-
         this.interFaceImg= new Image()
         this.interFaceImg.src = `../img/Interfaz.png`
-        
         this.pressEnterImg= new Image()
         this.pressEnterImg.src = `../img/Interfaz_Press_Enter_Sprite.png`
-
         this.cleanScreen()
-
         this.CTX.drawImage(this.interFaceImg,0,0,this.size.width,this.size.height)
-
         this.interFaceCont += 1*this.interFaceDir
         this.interFaceCont > this.framesPressEnter ? this.interFaceDir = -1 : null
         this.interFaceCont === 0 ? this.interFaceDir = 1 : null
-
         this.CTX.drawImage(
             this.pressEnterImg,
             this.interFaceCont * this.sizePressEnter.width / this.framesPressEnter , 0 ,
@@ -104,16 +94,13 @@ interFace(){
         this.listenerStart()
     }, 100);
 },
-
-
 listenerStart(){
    
 document.body.addEventListener("keyup",  (e) => {
 
     if(e.key === "Enter")
     {
-        if(this.intervalID === undefined) {
-        this.soundInit.pause()
+        if(this.intervalID === undefined) { 
         clearInterval(this.interFaceInterval)
         this.start()
         }
@@ -135,13 +122,6 @@ start(){
    this.intervalID = setInterval(() => {
         if(this.timer.currentTime <= 0)
         {
-
-            if(this.player[0].score === this.player[1].score){
-                this.timer.currentTime += 11
-            }
-            else{
-                if(this.player[0].score < this.player[1].score)
-
             this.sound.pause()
             this.soundEnd.play()
             clearInterval(this.intervalID)
@@ -156,14 +136,12 @@ start(){
             } 
             else
             {
-                this.winImg = new Image()
+               this.winImg = new Image()
                 this.winImg.src = "../img/Player2Wins.png"
                 this.winImg.onload = () =>{
                     this.CTX.drawImage(this.winImg,0,0,this.size.width,this.size.height)
                 }
             }
-            clearInterval(this.intervalID)
-            }         
         }
         this.createGlobo()
         this.createGloboESP()
@@ -266,6 +244,7 @@ drawBullets(){
 //#endregion
 
 //#region COLLISION
+
 checkAllCollisions()
 {
     this.collisionPlayerGlobo()
@@ -275,9 +254,7 @@ checkAllCollisions()
     this.collisionGloboGlobo()
     this.collisionGloboGloboESP()
     this.collisionGloboESPGloboESP()
-
 },
-
 collisionPlayerGlobo(){
     this.player.forEach(element => {
         this.globos.forEach( globos =>{
@@ -290,51 +267,43 @@ collisionPlayerGlobo(){
         })
     });
 },
-
 collisionPlayerGloboESP(){
     this.player.forEach(element => {
         this.globos_esp.forEach( globos_esp =>{
              if(utilies.checkCircularRectagleCollision(globos_esp.radius,element.size.width/element.frames - 15,element.size.height - 35, globos_esp.position.X,globos_esp.position.Y,element.pos.X,element.pos.Y)){
                  this.removeGlobosESP(globos_esp)
-                 this.soundcrash.volume = 1
-                     this.soundPlayerHit.play()
+                 this.soundPlayerHit.play()
                  element.score -= 3
                  element.score<0 ? element.score = 0: null
              }
         })
     });
 },
-
 collisionBulletGlobo(){
     this.player.forEach(player => {
         player.bullets.forEach(bullets =>{
             this.globos.forEach(globos => {
                  if(utilies.checkCircularRectagleCollision(globos.radius,bullets.width,bullets.height, globos.position.X,globos.position.Y, bullets.pos.X, bullets.pos.Y)){
                     this.removeObject(player,bullets,globos)
-                    this.soundcrash.volume = 1
-                   this.soundcrash.play()
                     player.score++
+                    this.soundcrash.play()
                  }
             })
         })
     });
 },
-
 collisionBulletGloboESP(){
     this.player.forEach(player => {
         player.bullets.forEach(bullets =>{
             this.globos_esp.forEach(globos_esp => {
                  if(utilies.checkCircularRectagleCollision(globos_esp.radius,bullets.width,bullets.height, globos_esp.position.X,globos_esp.position.Y, bullets.pos.X, bullets.pos.Y)){
                     this.removeObject(player,bullets,globos_esp)
+                    this.soundcrash.play()
                     if (globos_esp.colorNumber === this.colorNumber) {
                         player.score++
-                        this.soundcrash.volume = 1
-                        this.soundcrash.play()
                     }
                     else
                     {
-                        this.soundcrash.volume = 1
-                        this.soundcrash.play()
                         player.score -=2
                         player.score < 0 ? player.score = 0:null
                     }
@@ -343,19 +312,16 @@ collisionBulletGloboESP(){
         })
     });
 },
-
 collisionGloboGlobo(){
     this.globos.forEach(globo1 =>{
         this.globos.forEach(globo2 =>{
             if(utilies.checkBalloonCollision(globo1.radius,globo2.radius,globo1.position.X,globo1.position.Y,globo2.position.X,globo2.position.Y)&&(globo1.globoID != globo2.globoID)){
-
                if((globo1.colDetect === false || globo2.colDetect === false) &&  (this.timer.currentTime < globo1.timeCol - 1 || this.timer.currentTime < globo2.timeCol - 1  ) )
                {
                    globo1.colDetect =  true
                    globo2.colDetect = true
                    globo1.timeCol = this.timer.currentTime
                    globo2.timeCol = this.timer.currentTime
-
                 if(globo1.globoID != globo2.globoID)
                 {
                     if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
@@ -468,8 +434,6 @@ collisionGloboGlobo(){
         })
     })
 },
-
-
 collisionGloboGloboESP(){
     this.globos.forEach(globo1 =>{
         this.globos_esp.forEach(globo2 =>{
@@ -480,9 +444,6 @@ collisionGloboGloboESP(){
                    globo2.colDetect = true
                    globo1.timeCol = this.timer.currentTime
                    globo2.timeCol = this.timer.currentTime
-
-
-
                 if(globo1.globoID != globo2.globoID)
                 {
                     if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
@@ -500,7 +461,6 @@ collisionGloboGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * 1
-
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
                         {
@@ -596,7 +556,6 @@ collisionGloboGloboESP(){
         })
     })
 },
-
 collisionGloboESPGloboESP(){
     this.globos_esp.forEach(globo1 =>{
         this.globos_esp.forEach(globo2 =>{
@@ -624,7 +583,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * 1
-
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
                         {
@@ -632,7 +590,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * -1
-
                         }
                         else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -640,7 +597,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * 1
-
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -648,12 +604,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * -1
-
                         }
-
-
-                        }
-                        
                     }
                     else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
                     {
@@ -663,7 +614,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * 1
-
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
                         {
@@ -671,7 +621,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * 1
-
                         }
                         else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -679,7 +628,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * 1
-
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -687,12 +635,7 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * -1
-
                         }
-
-                        }
-                        
-
                     }
                     else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY === globo2.direcctionY)
                     {
@@ -702,7 +645,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * 1
-
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
                         {
@@ -710,7 +652,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * -1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * 1
-
                         }
                         else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -718,7 +659,6 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * 1
                         globo2.direcctionY = globo2.direcctionY * -1
-
                         }
                         else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
                         {
@@ -726,18 +666,10 @@ collisionGloboESPGloboESP(){
                         globo1.direcctionY = globo1.direcctionY * 1
                         globo2.direcctionX = globo2.direcctionX * -1
                         globo2.direcctionY = globo2.direcctionY * -1
-
                         }
                     }
                 }
               }
-
-
-                        }
-                        
-                    }
-                } 
-              }         
             }
             else if(globo1.colDetect === true && globo2.colDetect === true){
                 globo1.colDetect =  false
