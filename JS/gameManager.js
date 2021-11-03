@@ -12,7 +12,7 @@ size : {
 
 timer :undefined,
 intervalID : undefined,
-currentTime : 10,
+currentTime : 360,
 stringTime : "",
 
 background:undefined,
@@ -28,8 +28,16 @@ globoID : 0,
 
 interFaceInterval:undefined,
 interFaceImg: undefined,
+
+sizePressEnter : {
+    height:84,
+    width:4484,
+},
+
+pressEnterImg: undefined,
 interFaceCont : 0,
 interFaceDir : 1,
+framesPressEnter : 9,
 
 colorNumber : 0,
 
@@ -65,15 +73,30 @@ init(){
 interFace(){
    this.interFaceInterval= setInterval(() => {
         this.interFaceImg= new Image()
-        this.interFaceImg.src = `../img/Interfaz${this.interFaceCont}.png`
+        this.interFaceImg.src = `../img/Interfaz.png`
+        
+        this.pressEnterImg= new Image()
+        this.pressEnterImg.src = `../img/Interfaz_Press_Enter_Sprite.png`
+
         this.cleanScreen()
+
         this.CTX.drawImage(this.interFaceImg,0,0,this.size.width,this.size.height)
+
         this.interFaceCont += 1*this.interFaceDir
-        this.interFaceCont > 1 ? this.interFaceDir = -1 : null
+        this.interFaceCont > this.framesPressEnter ? this.interFaceDir = -1 : null
         this.interFaceCont === 0 ? this.interFaceDir = 1 : null
+
+        this.CTX.drawImage(
+            this.pressEnterImg,
+            this.interFaceCont * this.sizePressEnter.width / this.framesPressEnter , 0 ,
+            this.sizePressEnter.width/this.framesPressEnter,this.sizePressEnter.height,
+            this.size.width/2 - this.sizePressEnter.width / this.framesPressEnter/2, this.size.height/2,
+            this.sizePressEnter.width/this.framesPressEnter,this.sizePressEnter.height)
         this.listenerStart()
-    }, 300);
+    }, 100);
 },
+
+
 listenerStart(){
    
 document.body.addEventListener("keyup",  (e) => {
@@ -94,8 +117,11 @@ start(){
    this.intervalID = setInterval(() => {
         if(this.timer.currentTime <= 0)
         {
-            clearInterval(this.intervalID)
-            if(this.player[0].score < this.player[1].score)
+            if(this.player[0].score === this.player[1].score){
+                this.timer.currentTime += 11
+            }
+            else{
+                if(this.player[0].score < this.player[1].score)
             {
                 this.winImg = new Image()
                 this.winImg.src = "../img/Player1Wins.png"
@@ -106,12 +132,14 @@ start(){
             } 
             else
             {
-               this.winImg = new Image()
+                this.winImg = new Image()
                 this.winImg.src = "../img/Player2Wins.png"
                 this.winImg.onload = () =>{
                     this.CTX.drawImage(this.winImg,0,0,this.size.width,this.size.height)
                 }
             }
+            clearInterval(this.intervalID)
+            }         
         }
         this.createGlobo()
         this.createGloboESP()
@@ -220,6 +248,9 @@ checkAllCollisions()
     this.collisionBulletGlobo()
     this.collisionPlayerGloboESP()
     this.collisionBulletGloboESP()
+    this.collisionGloboGlobo()
+    this.collisionGloboGloboESP()
+    this.collisionGloboESPGloboESP()
 },
 
 collisionPlayerGlobo(){
@@ -279,6 +310,375 @@ collisionBulletGloboESP(){
     });
 },
 
+collisionGloboGlobo(){
+    this.globos.forEach(globo1 =>{
+        this.globos.forEach(globo2 =>{
+            if(utilies.checkBalloonCollision(globo1.radius,globo2.radius,globo1.position.X,globo1.position.Y,globo2.position.X,globo2.position.Y)&&(globo1.globoID != globo2.globoID)){
+               if((globo1.colDetect === false || globo2.colDetect === false) &&  (this.timer.currentTime < globo1.timeCol - 1 || this.timer.currentTime < globo2.timeCol - 1  ) )
+               {
+                   globo1.colDetect =  true
+                   globo2.colDetect = true
+                   globo1.timeCol = this.timer.currentTime
+                   globo2.timeCol = this.timer.currentTime
+                if(globo1.globoID != globo2.globoID)
+                {
+                    if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
+                    {
+                        globo1.direcctionX = globo1.direcctionX *-1
+                        globo2.direcctionX = globo2.direcctionX *-1
+                        globo1.direcctionY = globo1.direcctionY *-1
+                        globo2.direcctionY = globo2.direcctionY *-1
+                    }
+                    else if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY === globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                    else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                    else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY === globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                }
+              }
+            }
+            else if(globo1.colDetect === true && globo2.colDetect === true){
+                globo1.colDetect =  false
+                globo2.colDetect = false
+            }
+        })
+    })
+},
+
+
+collisionGloboGloboESP(){
+    this.globos.forEach(globo1 =>{
+        this.globos_esp.forEach(globo2 =>{
+            if(utilies.checkBalloonCollision(globo1.radius,globo2.radius,globo1.position.X,globo1.position.Y,globo2.position.X,globo2.position.Y)&&(globo1.globoID != globo2.globoID)){
+               if((globo1.colDetect === false || globo2.colDetect === false) &&  (this.timer.currentTime < globo1.timeCol - 1 || this.timer.currentTime < globo2.timeCol - 1  ) )
+               {
+                   globo1.colDetect =  true
+                   globo2.colDetect = true
+                   globo1.timeCol = this.timer.currentTime
+                   globo2.timeCol = this.timer.currentTime
+                if(globo1.globoID != globo2.globoID)
+                {
+                    if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
+                    {
+                        globo1.direcctionX = globo1.direcctionX *-1
+                        globo2.direcctionX = globo2.direcctionX *-1
+                        globo1.direcctionY = globo1.direcctionY *-1
+                        globo2.direcctionY = globo2.direcctionY *-1
+                    }
+                    else if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY === globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                    else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                    else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY === globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                }
+              }
+            }
+            else if(globo1.colDetect === true && globo2.colDetect === true){
+                globo1.colDetect =  false
+                globo2.colDetect = false
+            }
+        })
+    })
+},
+
+collisionGloboESPGloboESP(){
+    this.globos_esp.forEach(globo1 =>{
+        this.globos_esp.forEach(globo2 =>{
+            if(utilies.checkBalloonCollision(globo1.radius,globo2.radius,globo1.position.X,globo1.position.Y,globo2.position.X,globo2.position.Y)&&(globo1.globoID != globo2.globoID)){
+               if((globo1.colDetect === false || globo2.colDetect === false) &&  (this.timer.currentTime < globo1.timeCol - 1 || this.timer.currentTime < globo2.timeCol - 1  ) )
+               {
+                   globo1.colDetect =  true
+                   globo2.colDetect = true
+                   globo1.timeCol = this.timer.currentTime
+                   globo2.timeCol = this.timer.currentTime
+                if(globo1.globoID != globo2.globoID)
+                {
+                    if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
+                    {
+                        globo1.direcctionX = globo1.direcctionX *-1
+                        globo2.direcctionX = globo2.direcctionX *-1
+                        globo1.direcctionY = globo1.direcctionY *-1
+                        globo2.direcctionY = globo2.direcctionY *-1
+                    }
+                    else if(globo1.direcctionX != globo2.direcctionX && globo1.direcctionY === globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                    else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY != globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                    else if(globo1.direcctionX === globo2.direcctionX && globo1.direcctionY === globo2.direcctionY)
+                    {
+                        if(globo1.position.X < globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y < globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * -1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * 1
+                        }
+                        else if(globo1.position.X < globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * -1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * 1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                        else if(globo1.position.X > globo2.position.X && globo1.position.Y > globo2.position.Y )
+                        {
+                        globo1.direcctionX = globo1.direcctionX * 1
+                        globo1.direcctionY = globo1.direcctionY * 1
+                        globo2.direcctionX = globo2.direcctionX * -1
+                        globo2.direcctionY = globo2.direcctionY * -1
+                        }
+                    }
+                }
+              }
+            }
+            else if(globo1.colDetect === true && globo2.colDetect === true){
+                globo1.colDetect =  false
+                globo2.colDetect = false
+            }
+        })
+    })
+},
 //#endregion
 
 //#region LISTENER

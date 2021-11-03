@@ -1,8 +1,8 @@
 class GlobosESP extends Globos {
 
-    constructor(CTX,canvasDOM,radius,size,speed,direcctionX,direcctionY,position,floorPosY,globoID,colors)
+    constructor(CTX,canvasDOM,radius,size,speed,direcctionX,direcctionY,position,floorPosY,globoID,colors,colDetect,timeCol)
     {
-        super(CTX,canvasDOM,radius,size,speed,direcctionX,direcctionY,position,floorPosY,globoID,colors);
+        super(CTX,canvasDOM,radius,size,speed,direcctionX,direcctionY,position,floorPosY,globoID,colors,colDetect,timeCol);
     }
 
     moveGlobos(){
