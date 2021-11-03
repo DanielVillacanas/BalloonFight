@@ -70,10 +70,10 @@ class Player {
     }
     
     animate() {
-    if (this.framesIndex === 15) {
-      this.framesIndex = 0
-    }
-    this.framesIndex++
+        if (this.framesIndex === 15) {
+        this.framesIndex = 0
+        }
+        this.framesIndex++
     }
 
     createBullets(){
@@ -116,7 +116,7 @@ class Player {
     drawScore(value,i,playerID)
     {
         this.imgScore = new Image()
-        this.imgScore.src = `../img/score.png`
+        this.imgScore.src = `../img/score${playerID}.png`
         this.CTX.drawImage(
             this.imgScore,
             value * this.scoreSize.width / this.scoreFrames  , 0 ,
