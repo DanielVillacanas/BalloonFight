@@ -1,5 +1,6 @@
 window.onload = () => {
 
+    
     gameManager.init()
     
 }

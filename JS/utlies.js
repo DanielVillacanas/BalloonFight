@@ -24,7 +24,17 @@ const utilies ={
        else if (posY1 > posY2+height/2){
            return (TotalDis < radius1+(width/2))
        }
-    }
+    },
+
+     checkBalloonCollision(radius1,radius2,posX1,posY1,posX2,posY2)
+    {
+        let xdis = posX1 - posX2
+        let ydis = posY1 - posY2
+
+        let TotalDis = Math.sqrt(Math.pow(xdis,2) + Math.pow(ydis,2))
+
+       return (TotalDis < radius1+radius2)
+    },
 
     // checkCircularCollision(radius1,radius2,posX1,posY1,posX2,posY2)
     // {
