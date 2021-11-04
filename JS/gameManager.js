@@ -12,7 +12,7 @@ size : {
 
 timer :undefined,
 intervalID : undefined,
-currentTime : 10,
+currentTime : 60,
 stringTime : "",
 
 background:undefined,
@@ -25,6 +25,8 @@ globos:[],
 globos_esp:[],
 globos_espID : 0,
 globoID : 0,
+bonus : [],
+bonusID : 0,
 
 interFaceInterval:undefined,
 interFaceImg: undefined,
@@ -59,6 +61,13 @@ soundcrash:undefined,
 soundPlayerHit:undefined,
 soundEnd : undefined,
 soundInit:undefined,
+
+numglobos : 10,
+numglobosESP : 4,
+globosSpawnTime : 50,
+
+
+
 
 //#endregion
 
@@ -124,27 +133,38 @@ start(){
         {
             this.sound.pause()
             this.soundEnd.play()
-            clearInterval(this.intervalID)
-            if(this.player[0].score < this.player[1].score)
+
+
+            if(this.player[0].score === this.player[1].score)
             {
-                this.winImg = new Image()
-                this.winImg.src = "../img/Player1Wins.png"
-                this.winImg.onload = () =>{
-                    this.CTX.drawImage(this.winImg,0,0,this.size.width,this.size.height)
-                }
-                
-            } 
+                this.timer.currentTime += 11
+            }
             else
             {
-               this.winImg = new Image()
-                this.winImg.src = "../img/Player2Wins.png"
-                this.winImg.onload = () =>{
-                    this.CTX.drawImage(this.winImg,0,0,this.size.width,this.size.height)
+                if(this.player[0].score < this.player[1].score)
+                {
+                    this.winImg = new Image()
+                    this.winImg.src = "../img/Player1Wins.png"
+                    this.winImg.onload = () =>{
+                        this.CTX.drawImage(this.winImg,0,0,this.size.width,this.size.height)
+                    }
+                    
+                } 
+                else
+                {
+                this.winImg = new Image()
+                    this.winImg.src = "../img/Player2Wins.png"
+                    this.winImg.onload = () =>{
+                        this.CTX.drawImage(this.winImg,0,0,this.size.width,this.size.height)
+                    }
                 }
-            }
+                clearInterval(this.intervalID)
+             }
+            
         }
         this.createGlobo()
         this.createGloboESP()
+        this.createBonus()
         this.cleanScreen()
         this.drawAll()
         this.setListeners()
@@ -184,14 +204,14 @@ createPlayer(num){
 },
 
 createGlobo(){
-     if(this.ciclesCont%50 === 0 && this.globos.length < 10){
+     if(this.ciclesCont%this.globosSpawnTime === 0 && this.globos.length < this.numglobos){
         this.globos.push(new Globos(this.CTX,this.canvasDOM,this.colorNumber,2,this.floorPosY,this.globoID))
         this.globoID++
      }
  },
 
 createGloboESP(){
-    if(this.ciclesCont%100 === 0 && this.globos_esp.length < 0){
+    if(this.ciclesCont%100 === 0 && this.globos_esp.length < this.numglobosESP){
         this.globos_esp.push(new GlobosESP(this.CTX,this.canvasDOM,Math.round(Math.random()*4),2,this.floorPosY,this.globos_espID))
         this.globos_espID ++;
     }
@@ -199,6 +219,13 @@ createGloboESP(){
 
 createTimer(){
     this.timer = new Timer(this.CTX,this.canvasDOM,this.FPS,this.currentTime,this.stringTime)
+},
+
+createBonus(){
+   if(this.ciclesCont%400 === 0 && this.bonus.length < 2){
+        this.bonus.push(new Bonus(this.CTX,this.canvasDOM,Math.round(Math.random()*6),2,this.floorPosY,this.bonusID))
+        this.bonusID ++;
+    }
 },
 
 cleanScreen(){
@@ -217,6 +244,7 @@ drawAll(){
     this.player[1].paintScore(0)
     this.player[0].paintScore(1)
     this.checkAllCollisions()
+    this.drawBonus()
 },
 
 drawPlayer(){
@@ -241,6 +269,12 @@ drawBullets(){
         element.paintBullets()
     });
 },
+drawBonus(){
+    this.bonus.forEach(bonus => {
+        bonus.drawBonus()
+        bonus.checkBorderDown() ? this.removeBonus(bonus) : null
+    });
+},
 //#endregion
 
 //#region COLLISION
@@ -254,15 +288,20 @@ checkAllCollisions()
     this.collisionGloboGlobo()
     this.collisionGloboGloboESP()
     this.collisionGloboESPGloboESP()
+    this.collisionBulletBonus()
 },
 collisionPlayerGlobo(){
     this.player.forEach(element => {
         this.globos.forEach( globos =>{
              if(utilies.checkCircularRectagleCollision(globos.radius,element.size.width/element.frames - 15,element.size.height - 35, globos.position.X,globos.position.Y,element.pos.X,element.pos.Y)){
-                 this.removeGlobos(globos)
-                 this.soundPlayerHit.play()
-                  element.score -= 3
-                  element.score<0 ? element.score = 0: null
+                  if(element.inmortal) 
+                { }
+                else{
+                    element.score -= 3 
+                    this.removeGlobos(globos)
+                    this.soundPlayerHit.play()
+                }
+                 element.score<0 ? element.score = 0: null
              }
         })
     });
@@ -271,10 +310,16 @@ collisionPlayerGloboESP(){
     this.player.forEach(element => {
         this.globos_esp.forEach( globos_esp =>{
              if(utilies.checkCircularRectagleCollision(globos_esp.radius,element.size.width/element.frames - 15,element.size.height - 35, globos_esp.position.X,globos_esp.position.Y,element.pos.X,element.pos.Y)){
-                 this.removeGlobosESP(globos_esp)
-                 this.soundPlayerHit.play()
-                 element.score -= 3
+                
+                if(element.inmortal) 
+                { }
+                else{
+                    element.score -= 3 
+                    this.removeGlobosESP(globos_esp)
+                    this.soundPlayerHit.play()
+                }
                  element.score<0 ? element.score = 0: null
+                 
              }
         })
     });
@@ -285,7 +330,7 @@ collisionBulletGlobo(){
             this.globos.forEach(globos => {
                  if(utilies.checkCircularRectagleCollision(globos.radius,bullets.width,bullets.height, globos.position.X,globos.position.Y, bullets.pos.X, bullets.pos.Y)){
                     this.removeObject(player,bullets,globos)
-                    player.score++
+                    player.score += 1 + player.bonus2x
                     this.soundcrash.play()
                  }
             })
@@ -300,7 +345,7 @@ collisionBulletGloboESP(){
                     this.removeObject(player,bullets,globos_esp)
                     this.soundcrash.play()
                     if (globos_esp.colorNumber === this.colorNumber) {
-                        player.score++
+                        player.score += 1 + player.bonus2x
                     }
                     else
                     {
@@ -678,6 +723,19 @@ collisionGloboESPGloboESP(){
         })
     })
 },
+collisionBulletBonus(){
+    this.player.forEach(player => {
+        player.bullets.forEach(bullets => {
+            this.bonus.forEach(bonus => {
+                if(utilies.checkRectangleRectagleCollision(bullets,bonus))
+                {   
+                    this.removeBonus(bonus) 
+                    bonus.activateBonus(player)
+                }
+            });
+        });
+    });
+},
 
 //#endregion
 
@@ -782,6 +840,10 @@ removeGlobos(globo){
   },
 removeGlobosESP(globo){
     this.globos_esp = this.globos_esp.filter(element => element.globoID != globo.globoID)
+  },
+removeBonus(bonus)
+  {
+    this.bonus = this.bonus.filter(element => element.bonusID != bonus.bonusID)
   },
 //#endregion
 

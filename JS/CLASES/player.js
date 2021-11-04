@@ -31,12 +31,16 @@ class Player {
         //SCORE
         this.imgScore = undefined
         this.score = 0
+        this.bonus2x = 0;
         this.scoreFrames = 10
         this.scoreFramesIndex = 9
         this.scoreSize = {
             height : 108,
             width :921,
         }
+
+        //BONUS
+        this.inmortal = false
     }
 
     drawPlayer(ciclesCont){
@@ -78,8 +82,17 @@ class Player {
 
     createBullets(){
         if(this.bullets.length < 5){
-        this.bullets.push(new Bullets(this.CTX,this.canvasDOM,this.pos.X,this.pos.Y,10,"red",this.countBullets,this))
-        this.countBullets++
+            if(this.img_name === "player1_sprite.png")
+            {
+             this.bullets.push(new Bullets(this.CTX,this.canvasDOM,this.pos.X,this.pos.Y,10,"blue",this.countBullets,this))
+             this.countBullets++
+            }
+            else
+            {
+             this.bullets.push(new Bullets(this.CTX,this.canvasDOM,this.pos.X,this.pos.Y,10,"red",this.countBullets,this))
+             this.countBullets++
+            }
+
         }
     }
     paintBullets(){

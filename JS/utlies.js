@@ -22,12 +22,21 @@ const utilies ={
         let xdis = posX1 - posX2
         let ydis = posY1 - posY2
         let TotalDis = Math.sqrt(Math.pow(xdis,2) + Math.pow(ydis,2))
-        if(TotalDis < radius1+radius2 && TotalDis != 0)
-        {
-            console.log("object");
-        }
        return (TotalDis < radius1+radius2)
     },
+
+    checkRectangleRectagleCollision(bullet,bonus){
+        if (bullet.pos.X < bonus.position.X + bonus.size.width &&
+        bullet.pos.X + bullet.width > bonus.position.X &&
+        bullet.pos.Y < bonus.position.Y + bonus.size.height &&
+        bullet.height + bullet.pos.Y > bonus.position.Y) {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
     // checkCircularCollision(radius1,radius2,posX1,posY1,posX2,posY2)
     // {
     //     let xdis = posX1+radius1 - posX2+radius2
