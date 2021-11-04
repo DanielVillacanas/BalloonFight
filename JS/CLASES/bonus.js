@@ -63,10 +63,10 @@ class Bonus {
             break;
             case 1: //SPEED UP
             if(player.speed  != 0){
-                player.speed += 5
+                player.speed += 4
                 setTimeout(() => {
                 console.log("RESET BONUS")
-                player.speed -= 5;
+                player.speed -= 4;
                 }, 6000);
              }
             break;
@@ -76,7 +76,7 @@ class Bonus {
                     gameManager.player[0].speed = 0;
                     setTimeout(() => {
                     console.log("RESET BONUS")
-                    gameManager.player[0].speed = 15;
+                    gameManager.player[0].speed = 8;
                     }, 6000);
                 }
                 else
@@ -84,7 +84,7 @@ class Bonus {
                     gameManager.player[1].speed = 0;
                     setTimeout(() => {
                     console.log("RESET BONUS")
-                    gameManager.player[1].speed = 15;
+                    gameManager.player[1].speed = 8;
                     }, 6000);
                 }
                 break;
@@ -97,10 +97,10 @@ class Bonus {
                 break;
                 case 4: //SLOW
                 if(player.speed  != 0){
-                    player.speed -= 5
+                    player.speed -= 4
                     setTimeout(() => {
                     console.log("RESET BONUS")
-                    player.speed += 5;
+                    player.speed += 4;
                     }, 6000);
                 }
                 break;
@@ -114,11 +114,11 @@ class Bonus {
                 }
                 break;
                 case 6://PARTY HARD
-                    gameManager.numglobos = 40
-                    gameManager.globosSpawnTime = 20
+                    gameManager.numglobos = 20
+                    gameManager.globosSpawnTime = 10
                     setTimeout(() => {
-                    gameManager.numglobos = 10
-                    gameManager.globosSpawnTime = 50
+                    gameManager.numglobos = 7
+                    gameManager.globosSpawnTime = 30
                     }, 6000);
         }
     }

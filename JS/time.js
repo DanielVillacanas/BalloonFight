@@ -24,7 +24,7 @@ class Timer {
   }
   getMinutes() {
 
-    return Math.floor(Math.floor(this.currentTime/100)/60)
+    return Math.floor(Math.floor(this.currentTime)/60)
     // ... your code goes here
   }
 

@@ -3,7 +3,7 @@ class Globos {
     {
         this.CTX =  CTX
         this.canvasDOM = canvasDOM
-        this.radius = 25
+        this.radius = 35
         this.size = {
             height : 2*this.radius,
             width : 2*this.radius,
@@ -23,7 +23,7 @@ class Globos {
         this.colors = ["rgba(186, 5, 236)","rgba(229, 235, 7)","rgba(30, 197, 0)","rgba(0, 33, 197)","white"]
         this.colorNumber = colorNumber
         this.colDetect = false
-        this.timeCol = 60
+        this.timeCol = gameManager.currentTime
 
     }
     drawGlobos(colorNumber){

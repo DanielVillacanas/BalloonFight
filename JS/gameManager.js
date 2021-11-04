@@ -12,7 +12,7 @@ size : {
 
 timer :undefined,
 intervalID : undefined,
-currentTime : 60,
+currentTime : 90,
 stringTime : "",
 
 background:undefined,
@@ -20,7 +20,7 @@ background:undefined,
 floorPosY : 100,
 player:[],
 playerDirecction:[playerDir1 = 0,playerDir2 = 0],
-playerSpeed:[playerSpeed1 = 15,playerSpeed2 = 15],
+playerSpeed:[playerSpeed1 = 8,playerSpeed2 = 8],
 globos:[],
 globos_esp:[],
 globos_espID : 0,
@@ -62,9 +62,9 @@ soundPlayerHit:undefined,
 soundEnd : undefined,
 soundInit:undefined,
 
-numglobos : 10,
-numglobosESP : 4,
-globosSpawnTime : 50,
+numglobos : 7,
+numglobosESP : 2,
+globosSpawnTime : 30,
 
 
 
@@ -121,10 +121,11 @@ document.body.addEventListener("keyup",  (e) => {
 start(){
 
     this.sound = new Audio("../MUSIC/01.Forever Bound - Stereo Madness.mp3")
-    this.sound.volume = 0.1
+    this.sound.volume = 0.3
     this.sound.play()
     this.soundcrash = new Audio("../MUSIC/yt1s.com - explote sound geometry dash.mp3")
     this.soundPlayerHit =  new Audio ("../MUSIC/HitPlayer.mp3")
+    this.soundPlayerHit.volume = 0.5
     this.soundEnd = new Audio("../MUSIC/Final_Sound.mp3")
    
 
@@ -222,7 +223,7 @@ createTimer(){
 },
 
 createBonus(){
-   if(this.ciclesCont%400 === 0 && this.bonus.length < 2){
+   if(this.ciclesCont%600 === 0 && this.bonus.length < 1){
         this.bonus.push(new Bonus(this.CTX,this.canvasDOM,Math.round(Math.random()*6),2,this.floorPosY,this.bonusID))
         this.bonusID ++;
     }
@@ -729,7 +730,8 @@ collisionBulletBonus(){
             this.bonus.forEach(bonus => {
                 if(utilies.checkRectangleRectagleCollision(bullets,bonus))
                 {   
-                    this.removeBonus(bonus) 
+                    this.removeBonus(bonus)
+                    this.removeObject(player,bullets)
                     bonus.activateBonus(player)
                 }
             });
@@ -825,14 +827,15 @@ document.body.addEventListener("keyup", (e) => {
 //#region REMOVES
 removeObject(player,bala,globo){
     player.removeBullet(bala)
+    if(globo != undefined){
     if(globo.constructor.name === "GlobosESP")
     {
         this.removeGlobosESP(globo)
     }
-    else{
+    else {
      this.removeGlobos(globo)
     }
-   
+    }
   },
 
 removeGlobos(globo){
