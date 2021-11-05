@@ -6,7 +6,7 @@ BalloonFigth is a multiplayer arcade game.
 
 To run the game you have 2 different options:
 
-1-Open the following link :  https://github.com/DanielVillacanas/BalloonFight/
+1-Open the following link :  https://danielvillacanas.github.io/BalloonFight/
 
 2-Clone the repo with node.js installed at your computer and open the index.html file.
 
@@ -32,6 +32,9 @@ The bonuses are addons that introduce new mechanics to the game, we have 7 diffe
 5-FastMove : If you hit that bonus your speed will increase
 6-Freeze other : If you hit that bonus you will freeze the other player preventing him from moving.
 7-Shield : If you hit that bonus balloons hit will not affect you.
+
+![image](https://user-images.githubusercontent.com/46814661/140499175-9d113778-fab2-4290-be32-c99779006c10.png)
+
 
 At the end of the game time the player with the hight score will win.
 
