@@ -108,7 +108,7 @@ class Player {
             this.pos.X,
             this.pos.Y,
             10,
-            "blue",
+            "red",
             this.countBullets,
             this
           )
