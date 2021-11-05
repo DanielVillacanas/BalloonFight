@@ -34,5 +34,4 @@ The bonuses are addons that introduce new mechanics to the game, we have 7 diffe
 7-Shield : If you hit that bonus balloons hit will not affect you.
 
 At the end of the game time the player with the hight score will win.
-![image](https://user-images.githubusercontent.com/91207576/140498961-902b90fc-af2f-4a45-adec-40a0f00c92a6.png)
 
