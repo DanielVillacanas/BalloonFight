@@ -26,11 +26,17 @@ the background color will change to the color of the special balloon.
 The bonuses are addons that introduce new mechanics to the game, we have 7 different bonuses.
 
 1-PartyHard : That bonus increase the number of balloons and reduces the appearing interval of the balloons
+
 2-Self-Freeze : If you hit a self freeze bonus your character will not be allow during 10 seconds.
+
 3-Slow : If you hit that bonus your character will move slower.
+
 4-PointsX2 : If you hit a balloon your score will increase by 2 instead of 1.
+
 5-FastMove : If you hit that bonus your speed will increase
+
 6-Freeze other : If you hit that bonus you will freeze the other player preventing him from moving.
+
 7-Shield : If you hit that bonus balloons hit will not affect you.
 
 ![image](https://user-images.githubusercontent.com/46814661/140499175-9d113778-fab2-4290-be32-c99779006c10.png)
