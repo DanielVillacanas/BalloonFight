@@ -2,6 +2,8 @@
 
 BalloonFigth is a multiplayer arcade game.
 
+![image](https://user-images.githubusercontent.com/46814661/140500010-9e5b2c68-0ca6-4bfc-b6c1-b1b79aa6cf19.png)
+
 #Installation: 
 
 To run the game you have 2 different options:
