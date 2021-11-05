@@ -12,7 +12,7 @@ To run the game you have 2 different options:
 
 2-Clone the repo with node.js installed at your computer and open the index.html file.
 
-#Instructions
+#Instructions:
 
 - The game duration is 2 minutes, and the main idea is to obtain a bigger score than the other player.
 
